@@ -5,6 +5,8 @@ This repository release the **official codes** of our works on out-of-distributi
 **The code is well organized, therefore you can easily develop new algorithms by modifying ONLY ONE python file!!**
 
 ## 🔥 News
+- **20 Mar, 2026**: [DDE]() is accepted by ECCV 2026
+
 - **20 Mar, 2026**: [TANL](https://arxiv.org/pdf/2603.25250) is accepted by CVPR 2026, you can easily reproduce our results with [Bash](scripts/ood/TANL)
 
 - **20 Mar, 2026**: [ANTS](https://arxiv.org/abs/2509.03951) is accepted by CVPR 2026 (Oral), you can easily reproduce our results with [Bash](scripts/ood/ants)
