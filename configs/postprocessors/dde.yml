@@ -1,0 +1,26 @@
+postprocessor:
+  name: dde
+  APS_mode: True  # search for the best.
+  postprocessor_args:
+    tau: 1.0
+    alpha: 0.005
+    beta: 0.5
+    gamma: 1.0
+    localindice: 5
+    cluster_num: 0
+    thres: 0.8
+    gap: 0.0
+    memleng: 1000
+    lambdaval: 1.0
+    group_num: 1
+    group_size: 1000
+    random_permute: True
+    in_score: sum
+    samada: True
+    cossim: False
+    hat_M: 500
+    eta: 0.2
+    dota_rho: 0.005
+    neg_topk: 1
+  postprocessor_sweep:
+    tau_list: [0.5, 1, 1.5, 2.0, 3.0, 5.0]

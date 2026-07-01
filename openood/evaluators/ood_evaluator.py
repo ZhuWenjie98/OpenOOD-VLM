@@ -68,11 +68,11 @@ class OODEvaluator(BaseEvaluator):
                 id_gt = np.concatenate([id_gt, csid_gt])
 
         # load nearood data and compute ood metrics
-        print(u'\u2500' * 70, flush=True)
-        self._eval_ood(net, [id_pred, id_conf, id_gt],
-                       ood_data_loaders,
-                       postprocessor,
-                       ood_split='nearood')
+        # print(u'\u2500' * 70, flush=True)
+        # self._eval_ood(net, [id_pred, id_conf, id_gt],
+        #                ood_data_loaders,
+        #                postprocessor,
+        #                ood_split='nearood')
 
         # load farood data and compute ood metrics
         print(u'\u2500' * 70, flush=True)
@@ -200,6 +200,45 @@ class OODEvaluator(BaseEvaluator):
               flush=True)
         print('ACC: {:.2f}'.format(accuracy * 100), flush=True)
         print(u'\u2500' * 70, flush=True)
+
+        csv_path = os.path.join(self.config.output_dir, 'ood.csv')
+        if not os.path.exists(csv_path):
+            with open(csv_path, 'w', newline='') as csvfile:
+                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+                writer.writeheader()
+                writer.writerow(write_content)
+        else:
+            with open(csv_path, 'a', newline='') as csvfile:
+                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+                writer.writerow(write_content)
+
+    def _save_dde_csv(self, metrics, dataset_name):
+        [fpr, auroc, aupr_in, aupr_out, accuracy, ood_accuracy, acc_h] = metrics
+        #[fpr, auroc, aupr_in, aupr_out, accuracy] = metrics
+
+        write_content = {
+            'dataset': dataset_name,
+            'FPR@95': '{:.2f}'.format(100 * fpr),
+            'AUROC': '{:.2f}'.format(100 * auroc),
+            'AUPR_IN': '{:.2f}'.format(100 * aupr_in),
+            'AUPR_OUT': '{:.2f}'.format(100 * aupr_out),
+            'ACC': '{:.2f}'.format(100 * accuracy),
+            'OOD_ACC': '{:.2f}'.format(100 * ood_accuracy),
+            'ACC_H': '{:.2f}'.format(100 * acc_h)
+        }
+
+        fieldnames = list(write_content.keys())
+
+        # print ood metric results
+        print('FPR@95: {:.2f}, AUROC: {:.2f}'.format(100 * fpr, 100 * auroc),
+              end=' ',
+              flush=True)
+        print('AUPR_IN: {:.2f}, AUPR_OUT: {:.2f}'.format(
+            100 * aupr_in, 100 * aupr_out),
+              flush=True)
+        print('ACC: {:.2f}, OOD_ACC: {:.2f}, ACC_H: {:.2f}'.format(accuracy * 100, ood_accuracy*100, acc_h*100), flush=True)
+        print(u'\u2500' * 70, flush=True)
+
 
         csv_path = os.path.join(self.config.output_dir, 'ood.csv')
         if not os.path.exists(csv_path):

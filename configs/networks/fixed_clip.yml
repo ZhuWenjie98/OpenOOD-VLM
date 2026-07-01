@@ -13,6 +13,7 @@ network:
     num_classes: '@{dataset.num_classes}' # 1000
     dataset: '@{dataset.name}' # imagenet
     text_prompt: simple # simple | tip | full | *_cupl
+    cls_text_prompt: simple
     text_center: True
     ood_number: 1000
     image_size: '@{dataset.image_size}'

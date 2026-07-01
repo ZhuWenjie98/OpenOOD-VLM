@@ -113,3 +113,53 @@ def detection(ind_confidences,
         return best_error, best_delta, all_errors, all_thresholds
     else:
         return best_error, best_delta
+
+
+def compute_dual_metrics(conf, label, pred):
+    """Compute DDE metrics without changing legacy metric behavior."""
+    np.set_printoptions(precision=3)
+    recall = 0.95
+
+    valid_indices = label >= -1
+    filtered_conf = conf[valid_indices]
+    filtered_label = label[valid_indices]
+
+    auroc, aupr_in, aupr_out, fpr = auc_and_fpr_recall(
+        filtered_conf, filtered_label, recall)
+
+    id_accuracy = dde_id_acc(pred, label)
+    ood_accuracy = dde_ood_detection_acc(pred, label)
+    acc_h = dde_harmonic_mean(id_accuracy, ood_accuracy)
+
+    return [fpr, auroc, aupr_in, aupr_out, id_accuracy, ood_accuracy, acc_h]
+
+
+def dde_acc(pred, label):
+    """DDE in-domain accuracy: only labels >= 0 are considered ID."""
+    ind_pred = pred[label >= 0]
+    ind_label = label[label >= 0]
+    num_tp = np.sum(ind_pred == ind_label)
+    return num_tp / len(ind_label)
+
+
+def dde_id_acc(pred, label):
+    """Acc_S: ratio of ID samples correctly classified as their class."""
+    id_mask = label >= 0
+    correct_id = pred[id_mask] == label[id_mask]
+    return np.sum(correct_id) / np.sum(id_mask)
+
+
+def dde_ood_detection_acc(pred, label):
+    """Acc_N: ratio of OOD samples correctly predicted as -1."""
+    ood_mask = label == -1
+    pred_ood = pred[ood_mask] == -1
+
+    if np.sum(ood_mask) == 0:
+        return 0.0
+
+    return np.mean(pred_ood)
+
+
+def dde_harmonic_mean(acc_s, acc_n, eps=1e-12):
+    """Harmonic mean of Acc_S and Acc_N."""
+    return 2 * acc_s * acc_n / (acc_s + acc_n + eps)

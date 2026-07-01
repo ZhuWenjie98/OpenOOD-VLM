@@ -8,6 +8,7 @@ import torch.nn.functional as F
 from openood.networks.clip import clip
 from openood.networks.clip.simple_tokenizer import SimpleTokenizer as _Tokenizer
 from openood.networks.clip_for_wordnet_prepare import generate_cossim_idname_wordnet_dedup
+# from tools.classname_gt import imagenet_a_classes, imagenet_r_classes, cub_names, food_names, pet_names, car_names
 import ipdb
 import pdb
 import json, os
@@ -234,6 +235,7 @@ imagenet_classes = [
     'stinkhorn mushroom', 'earth star fungus', 'hen of the woods mushroom',
     'bolete', 'corn cob', 'toilet paper'
 ]
+
 all_wnids = ['n01440764', 'n01443537', 'n01484850', 'n01491361', 'n01494475', 'n01496331', 'n01498041', 'n01514668', 'n01514859', 'n01518878', 'n01530575', 'n01531178', 'n01532829', 'n01534433', 'n01537544', 'n01558993', 'n01560419', 'n01580077', 'n01582220', 'n01592084', 'n01601694', 'n01608432', 'n01614925', 'n01616318', 'n01622779', 'n01629819', 'n01630670', 'n01631663', 'n01632458', 'n01632777', 'n01641577', 'n01644373', 'n01644900', 'n01664065', 'n01665541', 'n01667114', 'n01667778', 'n01669191', 'n01675722', 'n01677366', 'n01682714', 'n01685808', 'n01687978', 'n01688243', 'n01689811', 'n01692333', 'n01693334', 'n01694178', 'n01695060', 'n01697457', 'n01698640', 'n01704323', 'n01728572', 'n01728920', 'n01729322', 'n01729977', 'n01734418', 'n01735189', 'n01737021', 'n01739381', 'n01740131', 'n01742172', 'n01744401', 'n01748264', 'n01749939', 'n01751748', 'n01753488', 'n01755581', 'n01756291', 'n01768244', 'n01770081', 'n01770393', 'n01773157', 'n01773549', 'n01773797', 'n01774384', 'n01774750', 'n01775062', 'n01776313', 'n01784675', 'n01795545', 'n01796340', 'n01797886', 'n01798484', 'n01806143', 'n01806567', 'n01807496', 'n01817953', 'n01818515', 'n01819313', 'n01820546', 'n01824575', 'n01828970', 'n01829413', 'n01833805', 'n01843065', 'n01843383', 'n01847000', 'n01855032', 'n01855672', 'n01860187', 'n01871265', 'n01872401', 'n01873310', 'n01877812', 'n01882714', 'n01883070', 'n01910747', 'n01914609', 'n01917289', 'n01924916', 'n01930112', 'n01943899', 'n01944390', 'n01945685', 'n01950731', 'n01955084', 'n01968897', 'n01978287', 'n01978455', 'n01980166', 'n01981276', 'n01983481', 'n01984695', 'n01985128', 'n01986214', 'n01990800', 'n02002556', 'n02002724', 'n02006656', 'n02007558', 'n02009229', 'n02009912', 'n02011460', 'n02012849', 'n02013706', 'n02017213', 'n02018207', 'n02018795', 'n02025239', 'n02027492', 'n02028035', 'n02033041', 'n02037110', 'n02051845', 'n02056570', 'n02058221', 'n02066245', 'n02071294', 'n02074367', 'n02077923', 'n02085620', 'n02085782', 'n02085936', 'n02086079', 'n02086240', 'n02086646', 'n02086910', 'n02087046', 'n02087394', 'n02088094', 'n02088238', 'n02088364', 'n02088466', 'n02088632', 'n02089078', 'n02089867', 'n02089973', 'n02090379', 'n02090622', 'n02090721', 'n02091032', 'n02091134', 'n02091244', 'n02091467', 'n02091635', 'n02091831', 'n02092002', 'n02092339', 'n02093256', 'n02093428', 'n02093647', 'n02093754', 'n02093859', 'n02093991', 'n02094114', 'n02094258', 'n02094433', 'n02095314', 'n02095570', 'n02095889', 'n02096051', 'n02096177', 'n02096294', 'n02096437', 'n02096585', 'n02097047', 'n02097130', 'n02097209', 'n02097298', 'n02097474', 'n02097658', 'n02098105', 'n02098286', 'n02098413', 'n02099267', 'n02099429', 'n02099601', 'n02099712', 'n02099849', 'n02100236', 'n02100583', 'n02100735', 'n02100877', 'n02101006', 'n02101388', 'n02101556', 'n02102040', 'n02102177', 'n02102318', 'n02102480', 'n02102973', 'n02104029', 'n02104365', 'n02105056', 'n02105162', 'n02105251', 'n02105412', 'n02105505', 'n02105641', 'n02105855', 'n02106030', 'n02106166', 'n02106382', 'n02106550', 'n02106662', 'n02107142', 'n02107312', 'n02107574', 'n02107683', 'n02107908', 'n02108000', 'n02108089', 'n02108422', 'n02108551', 'n02108915', 'n02109047', 'n02109525', 'n02109961', 'n02110063', 'n02110185', 'n02110341', 'n02110627', 'n02110806', 'n02110958', 'n02111129', 'n02111277', 'n02111500', 'n02111889', 'n02112018', 'n02112137', 'n02112350', 'n02112706', 'n02113023', 'n02113186', 'n02113624', 'n02113712', 'n02113799', 'n02113978', 'n02114367', 'n02114548', 'n02114712', 'n02114855', 'n02115641', 'n02115913', 'n02116738', 'n02117135', 'n02119022', 'n02119789', 'n02120079', 'n02120505', 'n02123045', 'n02123159', 'n02123394', 'n02123597', 'n02124075', 'n02125311', 'n02127052', 'n02128385', 'n02128757', 'n02128925', 'n02129165', 'n02129604', 'n02130308', 'n02132136', 'n02133161', 'n02134084', 'n02134418', 'n02137549', 'n02138441', 'n02165105', 'n02165456', 'n02167151', 'n02168699', 'n02169497', 'n02172182', 'n02174001', 'n02177972', 'n02190166', 'n02206856', 'n02219486', 'n02226429', 'n02229544', 'n02231487', 'n02233338', 'n02236044', 'n02256656', 'n02259212', 'n02264363', 'n02268443', 'n02268853', 'n02276258', 'n02277742', 'n02279972', 'n02280649', 'n02281406', 'n02281787', 'n02317335', 'n02319095', 'n02321529', 'n02325366', 'n02326432', 'n02328150', 'n02342885', 'n02346627', 'n02356798', 'n02361337', 'n02363005', 'n02364673', 'n02389026', 'n02391049', 'n02395406', 'n02396427', 'n02397096', 'n02398521', 'n02403003', 'n02408429', 'n02410509', 'n02412080', 'n02415577', 'n02417914', 'n02422106', 'n02422699', 'n02423022', 'n02437312', 'n02437616', 'n02441942', 'n02442845', 'n02443114', 'n02443484', 'n02444819', 'n02445715', 'n02447366', 'n02454379', 'n02457408', 'n02480495', 'n02480855', 'n02481823', 'n02483362', 'n02483708', 'n02484975', 'n02486261', 'n02486410', 'n02487347', 'n02488291', 'n02488702', 'n02489166', 'n02490219', 'n02492035', 'n02492660', 'n02493509', 'n02493793', 'n02494079', 'n02497673', 'n02500267', 'n02504013', 'n02504458', 'n02509815', 'n02510455', 'n02514041', 'n02526121', 'n02536864', 'n02606052', 'n02607072', 'n02640242', 'n02641379', 'n02643566', 'n02655020', 'n02666196', 'n02667093', 'n02669723', 'n02672831', 'n02676566', 'n02687172', 'n02690373', 'n02692877', 'n02699494', 'n02701002', 'n02704792', 'n02708093', 'n02727426', 'n02730930', 'n02747177', 'n02749479', 'n02769748', 'n02776631', 'n02777292', 'n02782093', 'n02783161', 'n02786058', 'n02787622', 'n02788148', 'n02790996', 'n02791124', 'n02791270', 'n02793495', 'n02794156', 'n02795169', 'n02797295', 'n02799071', 'n02802426', 'n02804414', 'n02804610', 'n02807133', 'n02808304', 'n02808440', 'n02814533', 'n02814860', 'n02815834', 'n02817516', 'n02823428', 'n02823750', 'n02825657', 'n02834397', 'n02835271', 'n02837789', 'n02840245', 'n02841315', 'n02843684', 'n02859443', 'n02860847', 'n02865351', 'n02869837', 'n02870880', 'n02871525', 'n02877765', 'n02879718', 'n02883205', 'n02892201', 'n02892767', 'n02894605', 'n02895154', 'n02906734', 'n02909870', 'n02910353', 'n02916936', 'n02917067', 'n02927161', 'n02930766', 'n02939185', 'n02948072', 'n02950826', 'n02951358', 'n02951585', 'n02963159', 'n02965783', 'n02966193', 'n02966687', 'n02971356', 'n02974003', 'n02977058', 'n02978881', 'n02979186', 'n02980441', 'n02981792', 'n02988304', 'n02992211', 'n02992529', 'n02999410', 'n03000134', 'n03000247', 'n03000684', 'n03014705', 'n03016953', 'n03017168', 'n03018349', 'n03026506', 'n03028079', 'n03032252', 'n03041632', 'n03042490', 'n03045698', 'n03047690', 'n03062245', 'n03063599', 'n03063689', 'n03065424', 'n03075370', 'n03085013', 'n03089624', 'n03095699', 'n03100240', 'n03109150', 'n03110669', 'n03124043', 'n03124170', 'n03125729', 'n03126707', 'n03127747', 'n03127925', 'n03131574', 'n03133878', 'n03134739', 'n03141823', 'n03146219', 'n03160309', 'n03179701', 'n03180011', 'n03187595', 'n03188531', 'n03196217', 'n03197337', 'n03201208', 'n03207743', 'n03207941', 'n03208938', 'n03216828', 'n03218198', 'n03220513', 'n03223299', 'n03240683', 'n03249569', 'n03250847', 'n03255030', 'n03259280', 'n03271574', 'n03272010', 'n03272562', 'n03290653', 'n03291819', 'n03297495', 'n03314780', 'n03325584', 'n03337140', 'n03344393', 'n03345487', 'n03347037', 'n03355925', 'n03372029', 'n03376595', 'n03379051', 'n03384352', 'n03388043', 'n03388183', 'n03388549', 'n03393912', 'n03394916', 'n03400231', 'n03404251', 'n03417042', 'n03424325', 'n03425413', 'n03443371', 'n03444034', 'n03445777', 'n03445924', 'n03447447', 'n03447721', 'n03450230', 'n03452741', 'n03457902', 'n03459775', 'n03461385', 'n03467068', 'n03476684', 'n03476991', 'n03478589', 'n03481172', 'n03482405', 'n03483316', 'n03485407', 'n03485794', 'n03492542', 'n03494278', 'n03495258', 'n03496892', 'n03498962', 'n03527444', 'n03529860', 'n03530642', 'n03532672', 'n03534580', 'n03535780', 'n03538406', 'n03544143', 'n03584254', 'n03584829', 'n03590841', 'n03594734', 'n03594945', 'n03595614', 'n03598930', 'n03599486', 'n03602883', 'n03617480', 'n03623198', 'n03627232', 'n03630383', 'n03633091', 'n03637318', 'n03642806', 'n03649909', 'n03657121', 'n03658185', 'n03661043', 'n03662601', 'n03666591', 'n03670208', 'n03673027', 'n03676483', 'n03680355', 'n03690938', 'n03691459', 'n03692522', 'n03697007', 'n03706229', 'n03709823', 'n03710193', 'n03710637', 'n03710721', 'n03717622', 'n03720891', 'n03721384', 'n03724870', 'n03729826', 'n03733131', 'n03733281', 'n03733805', 'n03742115', 'n03743016', 'n03759954', 'n03761084', 'n03763968', 'n03764736', 'n03769881', 'n03770439', 'n03770679', 'n03773504', 'n03775071', 'n03775546', 'n03776460', 'n03777568', 'n03777754', 'n03781244', 'n03782006', 'n03785016', 'n03786901', 'n03787032', 'n03788195', 'n03788365', 'n03791053', 'n03792782', 'n03792972', 'n03793489', 'n03794056', 'n03796401', 'n03803284', 'n03804744', 'n03814639', 'n03814906', 'n03825788', 'n03832673', 'n03837869', 'n03838899', 'n03840681', 'n03841143', 'n03843555', 'n03854065', 'n03857828', 'n03866082', 'n03868242', 'n03868863', 'n03871628', 'n03873416', 'n03874293', 'n03874599', 'n03876231', 'n03877472', 'n03877845', 'n03884397', 'n03887697', 'n03888257', 'n03888605', 'n03891251', 'n03891332', 'n03895866', 'n03899768', 'n03902125', 'n03903868', 'n03908618', 'n03908714', 'n03916031', 'n03920288', 'n03924679', 'n03929660', 'n03929855', 'n03930313', 'n03930630', 'n03933933', 'n03935335', 'n03937543', 'n03938244', 'n03942813', 'n03944341', 'n03947888', 'n03950228', 'n03954731', 'n03956157', 'n03958227', 'n03961711', 'n03967562', 'n03970156', 'n03976467', 'n03976657', 'n03977966', 'n03980874', 'n03982430', 'n03983396', 'n03991062', 'n03992509', 'n03995372', 'n03998194', 'n04004767', 'n04005630', 'n04008634', 'n04009552', 'n04019541', 'n04023962', 'n04026417', 'n04033901', 'n04033995', 'n04037443', 'n04039381', 'n04040759', 'n04041544', 'n04044716', 'n04049303', 'n04065272', 'n04067472', 'n04069434', 'n04070727', 'n04074963', 'n04081281', 'n04086273', 'n04090263', 'n04099969', 'n04111531', 'n04116512', 'n04118538', 'n04118776', 'n04120489', 'n04125021', 'n04127249', 'n04131690', 'n04133789', 'n04136333', 'n04141076', 'n04141327', 'n04141975', 'n04146614', 'n04147183', 'n04149813', 'n04152593', 'n04153751', 'n04154565', 'n04162706', 'n04179913', 'n04192698', 'n04200800', 'n04201297', 'n04204238', 'n04204347', 'n04208210', 'n04209133', 'n04209239', 'n04228054', 'n04229816', 'n04235860', 'n04238763', 'n04239074', 'n04243546', 'n04251144', 'n04252077', 'n04252225', 'n04254120', 'n04254680', 'n04254777', 'n04258138', 'n04259630', 'n04263257', 'n04264628', 'n04265275', 'n04266014', 'n04270147', 'n04273569', 'n04275548', 'n04277352', 'n04285008', 'n04286575', 'n04296562', 'n04310018', 'n04311004', 'n04311174', 'n04317175', 'n04325704', 'n04326547', 'n04328186', 'n04330267', 'n04332243', 'n04335435', 'n04336792', 'n04344873', 'n04346328', 'n04347754', 'n04350905', 'n04355338', 'n04355933', 'n04356056', 'n04357314', 'n04366367', 'n04367480', 'n04370456', 'n04371430', 'n04371774', 'n04372370', 'n04376876', 'n04380533', 'n04389033', 'n04392985', 'n04398044', 'n04399382', 'n04404412', 'n04409515', 'n04417672', 'n04418357', 'n04423845', 'n04428191', 'n04429376', 'n04435653', 'n04442312', 'n04443257', 'n04447861', 'n04456115', 'n04458633', 'n04461696', 'n04462240', 'n04465501', 'n04467665', 'n04476259', 'n04479046', 'n04482393', 'n04483307', 'n04485082', 'n04486054', 'n04487081', 'n04487394', 'n04493381', 'n04501370', 'n04505470', 'n04507155', 'n04509417', 'n04515003', 'n04517823', 'n04522168', 'n04523525', 'n04525038', 'n04525305', 'n04532106', 'n04532670', 'n04536866', 'n04540053', 'n04542943', 'n04548280', 'n04548362', 'n04550184', 'n04552348', 'n04553703', 'n04554684', 'n04557648', 'n04560804', 'n04562935', 'n04579145', 'n04579432', 'n04584207', 'n04589890', 'n04590129', 'n04591157', 'n04591713', 'n04592741', 'n04596742', 'n04597913', 'n04599235', 'n04604644', 'n04606251', 'n04612504', 'n04613696', 'n06359193', 'n06596364', 'n06785654', 'n06794110', 'n06874185', 'n07248320', 'n07565083', 'n07579787', 'n07583066', 'n07584110', 'n07590611', 'n07613480', 'n07614500', 'n07615774', 'n07684084', 'n07693725', 'n07695742', 'n07697313', 'n07697537', 'n07711569', 'n07714571', 'n07714990', 'n07715103', 'n07716358', 'n07716906', 'n07717410', 'n07717556', 'n07718472', 'n07718747', 'n07720875', 'n07730033', 'n07734744', 'n07742313', 'n07745940', 'n07747607', 'n07749582', 'n07753113', 'n07753275', 'n07753592', 'n07754684', 'n07760859', 'n07768694', 'n07802026', 'n07831146', 'n07836838', 'n07860988', 'n07871810', 'n07873807', 'n07875152', 'n07880968', 'n07892512', 'n07920052', 'n07930864', 'n07932039', 'n09193705', 'n09229709', 'n09246464', 'n09256479', 'n09288635', 'n09332890', 'n09399592', 'n09421951', 'n09428293', 'n09468604', 'n09472597', 'n09835506', 'n10148035', 'n10565667', 'n11879895', 'n11939491', 'n12057211', 'n12144580', 'n12267677', 'n12620546', 'n12768682', 'n12985857', 'n12998815', 'n13037406', 'n13040303', 'n13044778', 'n13052670', 'n13054560', 'n13133613', 'n15075141']
 imagenet_200_wnids = {'n01443537', 'n01484850', 'n01494475', 'n01498041', 'n01514859', 'n01518878', 'n01531178', 'n01534433', 'n01614925', 'n01616318', 'n01630670', 'n01632777', 'n01644373', 'n01677366', 'n01694178', 'n01748264', 'n01770393', 'n01774750', 'n01784675', 'n01806143', 'n01820546', 'n01833805', 'n01843383', 'n01847000', 'n01855672', 'n01860187', 'n01882714', 'n01910747', 'n01944390', 'n01983481', 'n01986214', 'n02007558', 'n02009912', 'n02051845', 'n02056570', 'n02066245', 'n02071294', 'n02077923', 'n02085620', 'n02086240', 'n02088094', 'n02088238', 'n02088364', 'n02088466', 'n02091032', 'n02091134', 'n02092339', 'n02094433', 'n02096585', 'n02097298', 'n02098286', 'n02099601', 'n02099712', 'n02102318', 'n02106030', 'n02106166', 'n02106550', 'n02106662', 'n02108089', 'n02108915', 'n02109525', 'n02110185', 'n02110341', 'n02110958', 'n02112018', 'n02112137', 'n02113023', 'n02113624', 'n02113799', 'n02114367', 'n02117135', 'n02119022', 'n02123045', 'n02128385', 'n02128757', 'n02129165', 'n02129604', 'n02130308', 'n02134084', 'n02138441', 'n02165456', 'n02190166', 'n02206856', 'n02219486', 'n02226429', 'n02233338', 'n02236044', 'n02268443', 'n02279972', 'n02317335', 'n02325366', 'n02346627', 'n02356798', 'n02363005', 'n02364673', 'n02391049', 'n02395406', 'n02398521', 'n02410509', 'n02423022', 'n02437616', 'n02445715', 'n02447366', 'n02480495', 'n02480855', 'n02481823', 'n02483362', 'n02486410', 'n02510455', 'n02526121', 'n02607072', 'n02655020', 'n02672831', 'n02701002', 'n02749479', 'n02769748', 'n02793495', 'n02797295', 'n02802426', 'n02808440', 'n02814860', 'n02823750', 'n02841315', 'n02843684', 'n02883205', 'n02906734', 'n02909870', 'n02939185', 'n02948072', 'n02950826', 'n02951358', 'n02966193', 'n02980441', 'n02992529', 'n03124170', 'n03272010', 'n03345487', 'n03372029', 'n03424325', 'n03452741', 'n03467068', 'n03481172', 'n03494278', 'n03495258', 'n03498962', 'n03594945', 'n03602883', 'n03630383', 'n03649909', 'n03676483', 'n03710193', 'n03773504', 'n03775071', 'n03888257', 'n03930630', 'n03947888', 'n04086273', 'n04118538', 'n04133789', 'n04141076', 'n04146614', 'n04147183', 'n04192698', 'n04254680', 'n04266014', 'n04275548', 'n04310018', 'n04325704', 'n04347754', 'n04389033', 'n04409515', 'n04465501', 'n04487394', 'n04522168', 'n04536866', 'n04552348', 'n04591713', 'n07614500', 'n07693725', 'n07695742', 'n07697313', 'n07697537', 'n07714571', 'n07714990', 'n07718472', 'n07720875', 'n07734744', 'n07742313', 'n07745940', 'n07749582', 'n07753275', 'n07753592', 'n07768694', 'n07873807', 'n07880968', 'n07920052', 'n09472597', 'n09835506', 'n10565667', 'n12267677'}
 imagenet_10_wnids = {"n04552348", "n04285008", "n01530575", "n02123597", "n02422699", "n02107574", "n01641577", "n03417042", "n02389026", "n03095699"}
@@ -249,23 +251,25 @@ for i in range(len(imagenet_r_mask)):
 imagenet10_classes = [imagenet_classes[all_wnids.index(wnid)] for wnid in imagenet_10_wnids]
 imagenet20_classes = [imagenet_classes[all_wnids.index(wnid)] for wnid in imagenet_20_wnids]
 imagenet100_classes = [imagenet_classes[all_wnids.index(wnid)] for wnid in imagenet_100_wnids]
+imagenet_a_classes=["stingray","goldfinch","junco","American robin","jay","bald eagle","vulture","newt","American bullfrog","box turtle","green iguana","agama","chameleon","American alligator","garter snake","harvestman","scorpion","tarantula","centipede","sulphur-crested cockatoo","lorikeet","hummingbird","toucan","duck","goose","koala","jellyfish","sea anemone","flatworm","snail","crayfish","hermit crab","flamingo","great egret","oystercatcher","pelican","sea lion","Chihuahua","Golden Retriever","Rottweiler","German Shepherd Dog","pug","red fox","Persian cat","lynx","lion","American black bear","mongoose","ladybug","rhinoceros beetle","weevil","fly","bee","ant","grasshopper","stick insect","cockroach","praying mantis","leafhopper","dragonfly","monarch butterfly","small white butterfly","gossamer-winged butterfly","starfish","cottontail rabbit","porcupine","fox squirrel","marmot","bison","skunk","armadillo","baboon","white-headed capuchin","African bush elephant","pufferfish","academic gown","accordion","acoustic guitar","airliner","ambulance","apron","balance beam","balloon","banjo","barn","wheelbarrow","basketball","lighthouse","beaker","bikini","hunting bow","bow tie","breastplate","broom","candle","canoe","castle","cello","chain","storage chest","Christmas stocking","cowboy boot","cradle","rotary dial telephone","digital clock","doormat","drumstick","dumbbell","envelope","feather boa","flagpole","forklift","fountain","garbage truck","goblet","go-kart","golf cart","grand piano","hair dryer","clothes iron","carved pumpkin","jeep","kimono","lighter","limousine","manhole cover","maraca","marimba","mask","mitten","mosque","metal nail","obelisk","ocarina","pipe organ","parachute","parking meter","piggy bank","pool table","hockey puck","quill","racket","fishing casting reel","revolver","rocking chair","rugby ball","salt shaker","sandal","saxophone","school bus","schooner","sewing machine","shovel","sleeping bag","snowmobile","snowplow","soap dispenser","spatula","spider web","steam locomotive","stethoscope","couch","submarine","sundial","suspension bridge","syringe","tank","teddy bear","toaster","torch","tricycle","umbrella","unicycle","viaduct","volleyball","washing machine","water tower","wine bottle","shipwreck","guacamole","pretzel","cheeseburger","hot dog","broccoli","cucumber","bell pepper","mushroom","lemon","banana","cherimoya (custard apple)","pomegranate","carbonara","bubble","cliff","volcano","baseball player","rapeseed","yellow lady's slipper","corn","acorn"]
+imagenet_r_classes = ['goldfish', 'great white shark', 'hammerhead shark', 'stingray', 'hen', 'ostrich', 'goldfinch', 'junco', 'bald eagle', 'vulture', 'smooth newt', 'axolotl', 'tree frog', 'green iguana', 'chameleon', 'Indian cobra', 'scorpion', 'tarantula', 'centipede', 'peafowl', 'lorikeet', 'hummingbird', 'toucan', 'duck', 'goose', 'black swan', 'koala', 'jellyfish', 'snail', 'American lobster', 'hermit crab', 'flamingo', 'great egret', 'pelican', 'king penguin', 'grey whale', 'killer whale', 'sea lion', 'Chihuahua', 'Shih Tzu', 'Afghan Hound', 'Basset Hound', 'Beagle', 'Bloodhound', 'Italian Greyhound', 'Whippet', 'Weimaraner', 'Yorkshire Terrier', 'Boston Terrier', 'Scottish Terrier', 'West Highland White Terrier', 'Golden Retriever', 'Labrador Retriever', 'Cocker Spaniel', 'collie', 'Border Collie', 'Rottweiler', 'German Shepherd Dog', 'Boxer', 'French Bulldog', 'St. Bernard', 'Siberian Husky', 'Dalmatian', 'pug', 'Pomeranian', 'Chow Chow', 'Pembroke Welsh Corgi', 'Toy Poodle', 'Standard Poodle', 'grey wolf', 'hyena', 'red fox', 'tabby cat', 'leopard', 'snow leopard', 'lion', 'tiger', 'cheetah', 'polar bear', 'meerkat', 'ladybug', 'fly', 'bee', 'ant', 'grasshopper', 'cockroach', 'praying mantis', 'dragonfly', 'monarch butterfly', 'starfish', 'cottontail rabbit', 'porcupine', 'fox squirrel', 'beaver', 'guinea pig', 'zebra', 'pig', 'hippopotamus', 'bison', 'gazelle', 'llama', 'skunk', 'badger', 'orangutan', 'gorilla', 'chimpanzee', 'gibbon', 'baboon', 'giant panda', 'eel', 'clownfish', 'pufferfish', 'accordion', 'ambulance', 'assault rifle', 'backpack', 'barn', 'wheelbarrow', 'basketball', 'bathtub', 'lighthouse', 'beer glass', 'binoculars', 'birdhouse', 'bow tie', 'broom', 'bucket', 'cauldron', 'candle', 'cannon', 'canoe', 'carousel', 'castle', 'mobile phone', 'cowboy hat', 'electric guitar', 'fire truck', 'flute', 'gas mask or respirator', 'grand piano', 'guillotine', 'hammer', 'harmonica', 'harp', 'hatchet', 'jeep', 'joystick', 'lab coat', 'lawn mower', 'lipstick', 'mailbox', 'missile', 'mitten', 'parachute', 'pickup truck', 'pirate ship', 'revolver', 'rugby ball', 'sandal', 'saxophone', 'school bus', 'schooner', 'shield', 'soccer ball', 'space shuttle', 'spider web', 'steam locomotive', 'scarf', 'submarine', 'tank', 'tennis ball', 'tractor', 'trombone', 'vase', 'violin', 'military aircraft', 'wine bottle', 'ice cream', 'bagel', 'pretzel', 'cheeseburger', 'hot dog', 'cabbage', 'broccoli', 'cucumber', 'bell pepper', 'mushroom', 'Granny Smith apple', 'strawberry', 'lemon', 'pineapple', 'banana', 'pomegranate', 'pizza', 'burrito', 'espresso', 'volcano', 'baseball player', 'scuba diver', 'acorn']
 # # imagenet200_classes_temp = [imagenet_classes[all_wnids.index(wnid)] for wnid in imagenet_200_wnids]
 # ipdb.set_trace()
 cifar100_class_names = [
-    "apple", "aquarium_fish", "baby", "bear", "beaver", "bed", "bee", "beetle",
+    "apple", "aquarium fish", "baby", "bear", "beaver", "bed", "bee", "beetle",
     "bicycle", "bottle", "bowl", "boy", "bridge", "bus", "butterfly", "camel",
     "can", "castle", "caterpillar", "cattle", "chair", "chimpanzee", "clock",
     "cloud", "cockroach", "couch", "crab", "crocodile", "cup", "dinosaur",
     "dolphin", "elephant", "flatfish", "forest", "fox", "girl", "hamster", "house",
-    "kangaroo", "keyboard", "lamp", "lawn_mower", "leopard", "lion", "lizard",
-    "lobster", "man", "maple_tree", "motorcycle", "mountain", "mouse", "mushroom",
-    "oak_tree", "orange", "orchid", "otter", "palm_tree", "pear", "pickup_truck",
-    "pine_tree", "plain", "plate", "poppy", "porcupine", "possum", "rabbit",
+    "kangaroo", "keyboard", "lamp", "lawn mower", "leopard", "lion", "lizard",
+    "lobster", "man", "maple tree", "motorcycle", "mountain", "mouse", "mushroom",
+    "oak tree", "orange", "orchid", "otter", "palm tree", "pear", "pickup truck",
+    "pine tree", "plain", "plate", "poppy", "porcupine", "possum", "rabbit",
     "raccoon", "ray", "road", "rocket", "rose", "sea", "seal", "shark", "shrew",
     "skunk", "skyscraper", "snail", "snake", "spider", "squirrel", "streetcar",
-    "sunflower", "sweet_pepper", "table", "tank", "telephone", "television",
+    "sunflower", "sweet pepper", "table", "tank", "telephone", "television",
     "tiger", "tractor", "train", "trout", "tulip", "turtle", "wardrobe", "whale",
-    "willow_tree", "wolf", "woman", "worm"
+    "willow tree", "wolf", "woman", "worm"
 ]
 cifar10_class_names = [
     "airplane",   # 0
@@ -288,9 +292,71 @@ sun397_classes = ['abbey', 'airplane_cabin', 'airport_terminal', 'alley', 'amphi
 
 waterbird_classes = ['land bird', 'water bird']
 
+cub_names = [
+'black footed albatross','laysan albatross','sooty albatross','groove billed ani','crested auklet','least auklet','parakeet auklet','rhinoceros auklet','brewer blackbird','red winged blackbird',
+'rusty blackbird','yellow headed blackbird','bobolink','indigo bunting','lazuli bunting','painted bunting','cardinal','spotted catbird','gray catbird','yellow breasted chat','eastern towhee','chuck will widow',
+'brandt cormorant','red faced cormorant','pelagic cormorant','bronzed cowbird','shiny cowbird','brown creeper','american crow','fish crow','black billed cuckoo','mangrove cuckoo','yellow billed cuckoo',
+'gray crowned rosy finch','purple finch','northern flicker','acadian flycatcher','great crested flycatcher','least flycatcher','olive sided flycatcher','scissor tailed flycatcher','vermilion flycatcher',
+'yellow bellied flycatcher','frigatebird','northern fulmar','gadwall','american goldfinch','european goldfinch','boat tailed grackle','eared grebe','horned grebe','pied billed grebe','western grebe','blue grosbeak',
+'evening grosbeak','pine grosbeak','rose breasted grosbeak','pigeon guillemot','california gull','glaucous winged gull','heermann gull','herring gull','ivory gull','ring billed gull','slaty backed gull','western gull',
+'anna hummingbird','ruby throated hummingbird','rufous hummingbird','green violetear','long tailed jaeger','pomarine jaeger','blue jay','florida jay','green jay','dark eyed junco','tropical kingbird','gray kingbird',
+'belted kingfisher','green kingfisher','pied kingfisher','ringed kingfisher','white breasted kingfisher','red legged kittiwake','horned lark','pacific loon','mallard','western meadowlark','hooded merganser',
+'red breasted merganser','mockingbird','nighthawk','clark nutcracker','white breasted nuthatch','baltimore oriole','hooded oriole','orchard oriole','scott oriole','ovenbird','brown pelican','white pelican','western wood pewee',
+'sayornis','american pipit','whip poor will','horned puffin','common raven','white necked raven','american redstart','geococcyx','loggerhead shrike','great grey shrike','baird sparrow','black throated sparrow','brewer sparrow',
+'chipping sparrow','clay colored sparrow','house sparrow','field sparrow','fox sparrow','grasshopper sparrow','harris sparrow','henslow sparrow','le conte sparrow','lincoln sparrow','nelson sharp tailed sparrow','savannah sparrow',
+'seaside sparrow','song sparrow','tree sparrow','vesper sparrow','white crowned sparrow','white throated sparrow','cape glossy starling','bank swallow','barn swallow','cliff swallow','tree swallow','scarlet tanager','summer tanager',
+'artic tern','black tern','caspian tern','common tern','elegant tern','forsters tern','least tern','green tailed towhee','brown thrasher','sage thrasher','black capped vireo','blue headed vireo','philadelphia vireo','red eyed vireo',
+'warbling vireo','white eyed vireo','yellow throated vireo','bay breasted warbler','black and white warbler','black throated blue warbler','blue winged warbler','canada warbler','cape may warbler','cerulean warbler','chestnut sided warbler',
+'golden winged warbler','hooded warbler','kentucky warbler','magnolia warbler','mourning warbler','myrtle warbler','nashville warbler','orange crowned warbler','palm warbler','pine warbler','prairie warbler','prothonotary warbler','swainson warbler',
+'tennessee warbler','wilson warbler','worm eating warbler','yellow warbler','northern waterthrush','louisiana waterthrush','bohemian waxwing','cedar waxwing','american three toed woodpecker','pileated woodpecker','red bellied woodpecker',
+'red cockaded woodpecker','red headed woodpecker','downy woodpecker','bewick wren','cactus wren','carolina wren','house wren','marsh wren','rock wren','winter wren','common yellowthroat'
+]
+
+food_names = [
+    'apple pie', 'baby back ribs', 'baklava', 'beef carpaccio', 'beef tartare', 'beet salad', 'beignets', 'bibimbap', 'bread pudding', 'breakfast burrito', 'bruschetta', 'caesar salad', 'cannoli', 'caprese salad', 'carrot cake', 'ceviche', 'cheesecake', 
+    'cheese plate', 'chicken curry', 'chicken quesadilla', 'chicken wings', 'chocolate cake', 'chocolate mousse', 'churros', 'clam chowder', 'club sandwich', 'crab cakes', 'creme brulee', 'croque madame', 'cup cakes', 'deviled eggs', 'donuts', 'dumplings', 
+    'edamame', 'eggs benedict', 'escargots', 'falafel', 'filet mignon', 'fish and chips', 'foie gras', 'french fries', 'french onion soup', 'french toast', 'fried calamari', 'fried rice', 'frozen yogurt', 'garlic bread', 'gnocchi', 'greek salad', 'grilled cheese sandwich', 
+    'grilled salmon', 'guacamole', 'gyoza', 'hamburger', 'hot and sour soup', 'hot dog', 'huevos rancheros', 'hummus', 'ice cream', 'lasagna', 'lobster bisque', 'lobster roll sandwich', 'macaroni and cheese', 'macarons', 'miso soup', 'mussels', 'nachos', 'omelette', 'onion rings', 
+    'oysters', 'pad thai', 'paella', 'pancakes', 'panna cotta', 'peking duck', 'pho', 'pizza', 'pork chop', 'poutine', 'prime rib', 'pulled pork sandwich', 'ramen', 'ravioli', 'red velvet cake', 'risotto', 'samosa', 'sashimi', 'scallops', 'seaweed salad', 'shrimp and grits', 'spaghetti bolognese', 
+    'spaghetti carbonara', 'spring rolls', 'steak', 'strawberry shortcake', 'sushi', 'tacos', 'takoyaki', 'tiramisu', 'tuna tartare', 'waffles'
+]
+
+pet_names = [
+    'abyssinian', 'american bulldog', 'american pit bull terrier', 'basset hound', 'beagle', 'bengal', 'birman', 'bombay', 'boxer', 'british shorthair', 'chihuahua', 'egyptian mau', 'english cocker spaniel',
+    'english setter', 'german shorthaired', 'great pyrenees', 'havanese', 'japanese chin', 'keeshond', 'leonberger', 'maine coon', 'miniature pinscher', 'newfoundland', 'persian', 'pomeranian', 'pug',
+    'ragdoll', 'russian blue', 'saint bernard', 'samoyed', 'scottish terrier', 'shiba inu', 'siamese', 'sphynx', 'staffordshire bull terrier', 'wheaten terrier', 'yorkshire terrier'
+]
+
+car_names = [
+'am general hummer suv 2000','acura rl sedan 2012','acura tl sedan 2012','acura tl type-s 2008','acura tsx sedan 2012','acura integra type r 2001','acura zdx hatchback 2012','aston martin v8 vantage convertible 2012','aston martin v8 vantage coupe 2012','aston martin virage convertible 2012',
+'aston martin virage coupe 2012','audi rs 4 convertible 2008','audi a5 coupe 2012','audi tts coupe 2012','audi r8 coupe 2012','audi v8 sedan 1994','audi 100 sedan 1994','audi 100 wagon 1994','audi tt hatchback 2011','audi s6 sedan 2011','audi s5 convertible 2012',
+'audi s5 coupe 2012','audi s4 sedan 2012','audi s4 sedan 2007','audi tt rs coupe 2012','bmw activehybrid 5 sedan 2012','bmw 1 series convertible 2012','bmw 1 series coupe 2012','bmw 3 series sedan 2012','bmw 3 series wagon 2012','bmw 6 series convertible 2007',
+'bmw x5 suv 2007','bmw x6 suv 2012','bmw m3 coupe 2012','bmw m5 sedan 2010','bmw m6 convertible 2010','bmw x3 suv 2012','bmw z4 convertible 2012','bentley continental supersports conv. convertible 2012','bentley arnage sedan 2009','bentley mulsanne sedan 2011',
+'bentley continental gt coupe 2012','bentley continental gt coupe 2007','bentley continental flying spur sedan 2007','bugatti veyron 16.4 convertible 2009','bugatti veyron 16.4 coupe 2009','buick regal gs 2012','buick rainier suv 2007','buick verano sedan 2012',
+'buick enclave suv 2012','cadillac cts-v sedan 2012','cadillac srx suv 2012','cadillac escalade ext crew cab 2007','chevrolet silverado 1500 hybrid crew cab 2012','chevrolet corvette convertible 2012','chevrolet corvette zr1 2012','chevrolet corvette ron fellows edition z06 2007',
+'chevrolet traverse suv 2012','chevrolet camaro convertible 2012','chevrolet hhr ss 2010','chevrolet impala sedan 2007','chevrolet tahoe hybrid suv 2012','chevrolet sonic sedan 2012','chevrolet express cargo van 2007','chevrolet avalanche crew cab 2012','chevrolet cobalt ss 2010',
+'chevrolet malibu hybrid sedan 2010','chevrolet trailblazer ss 2009','chevrolet silverado 2500hd regular cab 2012','chevrolet silverado 1500 classic extended cab 2007','chevrolet express van 2007','chevrolet monte carlo coupe 2007','chevrolet malibu sedan 2007','chevrolet silverado 1500 extended cab 2012',
+'chevrolet silverado 1500 regular cab 2012','chrysler aspen suv 2009','chrysler sebring convertible 2010','chrysler town and country minivan 2012','chrysler 300 srt-8 2010','chrysler crossfire convertible 2008','chrysler pt cruiser convertible 2008','daewoo nubira wagon 2002','dodge caliber wagon 2012',
+'dodge caliber wagon 2007','dodge caravan minivan 1997','dodge ram pickup 3500 crew cab 2010','dodge ram pickup 3500 quad cab 2009','dodge sprinter cargo van 2009','dodge journey suv 2012','dodge dakota crew cab 2010','dodge dakota club cab 2007','dodge magnum wagon 2008','dodge challenger srt8 2011',
+'dodge durango suv 2012','dodge durango suv 2007','dodge charger sedan 2012','dodge charger srt-8 2009','eagle talon hatchback 1998','fiat 500 abarth 2012','fiat 500 convertible 2012','ferrari ff coupe 2012','ferrari california convertible 2012','ferrari 458 italia convertible 2012','ferrari 458 italia coupe 2012',
+'fisker karma sedan 2012','ford f-450 super duty crew cab 2012','ford mustang convertible 2007','ford freestar minivan 2007','ford expedition el suv 2009','ford edge suv 2012','ford ranger supercab 2011','ford gt coupe 2006','ford f-150 regular cab 2012','ford f-150 regular cab 2007','ford focus sedan 2007',
+'ford e-series wagon van 2012','ford fiesta sedan 2012','gmc terrain suv 2012','gmc savana van 2012','gmc yukon hybrid suv 2012','gmc acadia suv 2012','gmc canyon extended cab 2012','geo metro convertible 1993','hummer h3t crew cab 2010','hummer h2 sut crew cab 2009','honda odyssey minivan 2012',
+'honda odyssey minivan 2007','honda accord coupe 2012','honda accord sedan 2012','hyundai veloster hatchback 2012','hyundai santa fe suv 2012','hyundai tucson suv 2012','hyundai veracruz suv 2012','hyundai sonata hybrid sedan 2012','hyundai elantra sedan 2007','hyundai accent sedan 2012','hyundai genesis sedan 2012',
+'hyundai sonata sedan 2012','hyundai elantra touring hatchback 2012','hyundai azera sedan 2012','infiniti g coupe ipl 2012','infiniti qx56 suv 2011','isuzu ascender suv 2008','jaguar xk xkr 2012','jeep patriot suv 2012','jeep wrangler suv 2012','jeep liberty suv 2012','jeep grand cherokee suv 2012','jeep compass suv 2012',
+'lamborghini reventon coupe 2008','lamborghini aventador coupe 2012','lamborghini gallardo lp 570-4 superleggera 2012','lamborghini diablo coupe 2001','land rover range rover suv 2012','land rover lr2 suv 2012','lincoln town car sedan 2011','mini cooper roadster convertible 2012','maybach landaulet convertible 2012',
+'mazda tribute suv 2011','mclaren mp4-12c coupe 2012','mercedes-benz 300-class convertible 1993','mercedes-benz c-class sedan 2012','mercedes-benz sl-class coupe 2009','mercedes-benz e-class sedan 2012','mercedes-benz s-class sedan 2012','mercedes-benz sprinter van 2012','mitsubishi lancer sedan 2012','nissan leaf hatchback 2012',
+'nissan nv passenger van 2012','nissan juke hatchback 2012','nissan 240sx coupe 1998','plymouth neon coupe 1999','porsche panamera sedan 2012','ram c/v cargo van minivan 2012','rolls-royce phantom drophead coupe convertible 2012','rolls-royce ghost sedan 2012','rolls-royce phantom sedan 2012','scion xd hatchback 2012',
+'spyker c8 convertible 2009','spyker c8 coupe 2009','suzuki aerio sedan 2007','suzuki kizashi sedan 2012','suzuki sx4 hatchback 2012','suzuki sx4 sedan 2012','tesla model s sedan 2012','toyota sequoia suv 2012','toyota camry sedan 2012','toyota corolla sedan 2012','toyota 4runner suv 2012','volkswagen golf hatchback 2012',
+'volkswagen golf hatchback 1991','volkswagen beetle hatchback 2012','volvo c30 hatchback 2012','volvo 240 sedan 1993','volvo xc90 suv 2007','smart fortwo convertible 2012'
+]
+
 def get_class_names(dataset):
-    if dataset == 'imagenet':
+    if dataset == 'imagenet' or dataset == 'imagenetv2'  or dataset == 'imagenets':
         return imagenet_classes
+    elif dataset == 'imageneta':
+        return imagenet_a_classes
+    elif dataset == 'imagenetr':
+        return imagenet_r_classes
     elif dataset == 'imagenet200':
         return imagenet200_classes
     elif dataset == 'imagenet_10':
@@ -305,6 +371,14 @@ def get_class_names(dataset):
         return cifar10_class_names
     elif dataset == 'cifar100':
         return cifar100_class_names
+    elif dataset == 'cub':
+        return cub_names
+    elif dataset == 'food':
+        return food_names
+    elif dataset == 'pet':
+        return pet_names
+    elif dataset == 'car':
+        return car_names    
     elif dataset == 'covid':
         return bimcv_class_names
     else:
@@ -452,12 +526,7 @@ def get_text_features(model, dataset, text_prompt):
         text_features = []
         for classname in tqdm(classnames):
             texts = [template.format(classname) for template in templates]  # format with class
-            ########################### use GPT generated text prompt
-            # if 'cupl' in text_prompt:
-            #     cupl_file = "CuPL_prompts_imagenet.json"
-            #     f = open('./openood/networks/clip/gpt3_prompts/' + cupl_file)
-            #     cupl_prompts = json.load(f)
-            #     texts += cupl_prompts[classname]
+
             texts = clip.tokenize(texts).cuda()  # tokenize
             class_embeddings = model.encode_text(texts)  # embed with text encoder
             class_embeddings /= class_embeddings.norm(dim=-1, keepdim=True)
@@ -547,11 +616,12 @@ def get_selected_ood_text_list(dataset='imagenet', total_ood_num=1000):
     else:
         print(f"File '{foot_path}' constructed.")
     wordnet_processed_path = foot_path + 'wordnet_' + dataset + '_cossim_dedup.pth'
+
     if os.path.exists(wordnet_processed_path):
         wordnet_dict = torch.load(wordnet_processed_path)
     else:
         classnames = get_class_names(dataset)
-        generate_cossim_idname_wordnet_dedup(classnames, wordnet_processed_path)
+        generate_cossim_idname_wordnet_dedup(classnames, dataset, foot_path)
         wordnet_dict = torch.load(wordnet_processed_path)
     
 
@@ -613,7 +683,7 @@ def get_selected_ood_text_list(dataset='imagenet', total_ood_num=1000):
 
 
 # https://github.com/openai/CLIP/blob/main/notebooks/Prompt_Engineering_for_ImageNet.ipynb
-def get_text_features_neg(model, dataset, text_prompt, text_center, ood_number):
+def get_text_features_neg(model, dataset, text_prompt, cls_text_prompt, text_center, ood_number):
     classnames = get_class_names(dataset) # imagenet --> imagenet class names
     templates = get_templates(text_prompt) # simple --> text prompt for each classes. 
     print('the noun template is set as:', templates)
@@ -621,11 +691,7 @@ def get_text_features_neg(model, dataset, text_prompt, text_center, ood_number):
         text_features = []
         for classname in tqdm(classnames):
             texts = [template.format(classname) for template in templates]  # format with class
-            # if 'cupl' in text_prompt:
-            #     cupl_file = "CuPL_prompts_imagenet.json"
-            #     f = open('./openood/networks/clip/gpt3_prompts/' + cupl_file)
-            #     cupl_prompts = json.load(f)
-            #     texts += cupl_prompts[classname]
+ 
             texts = clip.tokenize(texts).cuda()  # tokenize
             class_embeddings = model.encode_text(texts)  # embed with text encoder
             class_embeddings /= class_embeddings.norm(dim=-1, keepdim=True) # N*D
@@ -637,12 +703,40 @@ def get_text_features_neg(model, dataset, text_prompt, text_center, ood_number):
                 text_features.append(class_embeddings)
         text_features = torch.stack(text_features, dim=1).cuda() # 512*1000
 
+        cls_text_features = []
+        templates = get_templates(cls_text_prompt)
+        for classname in tqdm(classnames):
+            texts = [template.format(classname) for template in templates]  # format with class
+            # use CUPL prompt
+            #cupl_file = "CuPL_prompts_imagenet.json"
+            #cupl_file = "CuPL_prompts_bird.json"
+            #cupl_file = "CuPL_prompts_oxfordpets.json"
+            #cupl_file = "CuPL_prompts_food101.json"
+            #cupl_file = "CuPL_prompts_stanfordcars.json"
+            #cupl_file = "CuPL_prompts_cifar10.json"
+            #cupl_file = "CuPL_prompts_cifar100.json"
+            # f = open('./openood/networks/clip/gpt3_prompts/' + cupl_file)
+            # cupl_prompts = json.load(f)
+            # texts += cupl_prompts[classname]
+
+            texts = clip.tokenize(texts).cuda()  # tokenize
+            class_embeddings = model.encode_text(texts)  # embed with text encoder
+            class_embeddings /= class_embeddings.norm(dim=-1, keepdim=True) # N*D
+            if text_center:
+                class_embedding = class_embeddings.mean(dim=0)
+                class_embedding /= class_embedding.norm()
+                cls_text_features.append(class_embedding)
+            else:
+                cls_text_features.append(class_embeddings)
+        cls_text_features = torch.stack(cls_text_features, dim=1).cuda() # 512*1000
+
     # mean_text = - text_features.mean(1) # use the mean directly | or the inverse mean.
     # mean_text /= mean_text.norm()
     # mean_text = mean_text.view(-1, 1) 
     selected_adj_text, selected_noun_text, unselected_adj_text, unselected_noun_text = get_selected_ood_text_list(dataset=dataset, total_ood_num=ood_number)
-    # torch.save(selected_adj_text + selected_noun_text + unselected_adj_text + unselected_noun_text, 'text_cancidate_list.pth')
-    # pdb.set_trace()
+
+    #torch.save(selected_adj_text + selected_noun_text + unselected_adj_text + unselected_noun_text, 'text_cancidate_list.pth')
+  
     adj_imagenet_template = ['This is a {} photo.']
     with torch.no_grad():
         text_features_neg = []
@@ -671,54 +765,23 @@ def get_text_features_neg(model, dataset, text_prompt, text_center, ood_number):
             else:
                 text_features_neg.append(class_embeddings)
 
-        ############################ Avoiding unnecessary computation for text_features_unselected
-        # Cache the expensive unselected-text encoding:
-        # - first run: compute then save
-        # - later runs: directly load
-        cache_dir = './data/txtfiles_output/'
-        cache_path = os.path.join(cache_dir, 'text_features_unselected.pth')
+    text_features_neg = torch.stack(text_features_neg, dim=1).cuda() # 512*1000  or  torch.Size([7, 10000, 512])
+    text_features_unselected = text_features_neg
 
-        if os.path.exists(cache_path):
-            print(f'Loading cached text_features_unselected from: {cache_path}')
-            text_features_unselected = torch.load(cache_path).cuda()
-        else:
-            print(f'Building text_features_unselected and saving to: {cache_path}')
-            text_features_unselected = []
-            for classname in tqdm(unselected_adj_text):
-                texts = [template.format(classname) for template in adj_imagenet_template]  # format with class
-                texts = clip.tokenize(texts).cuda()  # tokenize
-                class_embeddings = model.encode_text(texts)  # embed with text encoder
-                class_embeddings /= class_embeddings.norm(dim=-1, keepdim=True)
-                if text_center:
-                    class_embedding = class_embeddings.mean(dim=0)
-                    class_embedding /= class_embedding.norm()
-                    text_features_unselected.append(class_embedding)
-                else:
-                    text_features_unselected.append(class_embeddings)
+    # torch.save(text_features_unselected, '/data1/wenjie/projects/OpenOOD-VLM/text_features_unselected.pth')
 
-            for classname in tqdm(unselected_noun_text):
-                texts = [template.format(classname) for template in templates]  # format with class
-                texts = clip.tokenize(texts).cuda()  # tokenize
-                class_embeddings = model.encode_text(texts)  # embed with text encoder
-                class_embeddings /= class_embeddings.norm(dim=-1, keepdim=True)
-                if text_center:
-                    class_embedding = class_embeddings.mean(dim=0)
-                    class_embedding /= class_embedding.norm()
-                    text_features_unselected.append(class_embedding)
-                else:
-                    text_features_unselected.append(class_embeddings)
+    #text_features_unselected = torch.load('/data1/wenjie/projects/DDE/text_features_unselected.pth')
+    #text_features_unselected = text_features_unselected.cuda()  # 或者 .cpu() 视情况而定
 
-            text_features_unselected = torch.stack(text_features_unselected, dim=1).cuda()# 512*1000  or  torch.Size([7, 10000, 512])
-            torch.save(text_features_unselected.detach().cpu(), cache_path)
-
-        text_features_neg = torch.stack(text_features_neg, dim=1).cuda() # 512*1000  or  torch.Size([7, 10000, 512])
+    # torch.save(text_features_neg, '/data1/wenjie/projects/OpenOOD-VLM/text_features_neg.pth')
+    #text_features_neg = torch.load('/data1/wenjie/projects/DDE/text_features_neg.pth')
+    #text_features_neg = text_features_neg.cuda()  # 或者 .cpu() 视情况而定
 
     text_features_id_ood = torch.cat((text_features, text_features_neg), dim=1)
-    # pdb.set_trace()
-    return text_features_id_ood, text_features_unselected
+    return text_features_id_ood, text_features_unselected, cls_text_features
 
 
-class FixedCLIP_NegOODPrompt(nn.Module):
+class FixedCLIP_DDE(nn.Module):
     def __init__(self, cfg):
         super().__init__()
         backbone = cfg.backbone.name # 'ViT-B/16'
@@ -738,7 +801,7 @@ class FixedCLIP_NegOODPrompt(nn.Module):
             param.requires_grad_(False) ## fix clip model.
         
         # text_features: feat_dim * text_nums
-        self.text_features, self.text_features_unselected = get_text_features_neg(self.model, cfg.backbone.dataset, cfg.backbone.text_prompt, cfg.backbone.text_center, cfg.backbone.ood_number)
+        self.text_features, self.text_features_unselected, self.cls_text_features = get_text_features_neg(self.model, cfg.backbone.dataset, cfg.backbone.text_prompt, cfg.backbone.cls_text_prompt, cfg.backbone.text_center, cfg.backbone.ood_number)
         
         # print('get the text features of SUN classes for visualization.')
         # self.sun_features = get_text_features_sun(self.model, cfg.backbone.dataset, cfg.backbone.text_prompt)
@@ -763,11 +826,9 @@ class FixedCLIP_NegOODPrompt(nn.Module):
     def forward(self, x, return_feat=False):
         image_features = self.model.encode_image(x)
         image_features /= image_features.norm(dim=-1, keepdim=True)  ## batch * dim
-        
-        # pdb.set_trace()
 
         if return_feat:
-            return image_features, self.text_features.transpose(0,1), self.logit_scale ## 512*11K --> 11K*512
+            return image_features, self.text_features.transpose(0,1), self.cls_text_features.transpose(0,1),  self.logit_scale ## 512*11K --> 11K*512
         else:
             logits = self.logit_scale * image_features @ self.text_features  ## when eval acc, the forward pass is here. 
             return logits

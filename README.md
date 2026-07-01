@@ -5,7 +5,7 @@ This repository release the **official codes** of our works on out-of-distributi
 **The code is well organized, therefore you can easily develop new algorithms by modifying ONLY ONE python file!!**
 
 ## 🔥 News
-- **20 Mar, 2026**: [DDE]() is accepted by ECCV 2026
+- **20 Mar, 2026**: [DDE](https://arxiv.org/pdf/2606.25758) is accepted by ECCV 2026, you can easily reproduce our results with [Bash](scripts/ood/dde)
 
 - **20 Mar, 2026**: [TANL](https://arxiv.org/pdf/2603.25250) is accepted by CVPR 2026, you can easily reproduce our results with [Bash](scripts/ood/TANL)
 
@@ -77,6 +77,11 @@ Our codebase accesses the datasets from `./data/` and pretrained models from `./
 ## 🚀 Training/Testing
 We provide training and evaluation scripts for all the methods we support in [scripts folder](https://github.com/YBZH/OpenOOD-VLM/tree/main/scripts).
 
+- [`ECCV2026 Official`] [DDE]((https://arxiv.org/pdf/2606.25758)) 
+```sh
+sh scripts/ood/dde/imagenet.sh
+```
+
 - [`CVPR2026 Official`] [TANL]((https://arxiv.org/pdf/2603.25250)) 
 ```sh
 sh scripts/ood/TANL/official.sh
@@ -136,6 +141,14 @@ We will also reproduce some interesting works for OOD detection with Vision-Lang
 ## 📖 Citation
 If you find our repository useful for your research, please consider citing our paper:
 ```bibtex
+
+@article{zhu2026dual,
+  title={Dual Distribution Estimation for Zero-shot Noisy Test-Time Adaptation with VLMs},
+  author={Zhu, Wenjie and Zhang, Yabin and Xu, Liang and Jin, Xin and Zeng, Wenjun and Zhang, Lei},
+  journal={arXiv preprint arXiv:2606.25758},
+  year={2026}
+}
+
 @article{zhang2026activation,
   title={Activation Matters: Test-time Activated Negative Labels for OOD Detection with Vision-Language Models},
   author={Zhang, Yabin and Varma, Maya and Gao, Yunhe and Delbrouck, Jean-Benoit and Liu, Jiaming and Wang, Chong and Langlotz, Curtis},

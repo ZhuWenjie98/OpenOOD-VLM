@@ -48,6 +48,7 @@ from .clip_coop_oodprompt import CoOp_OneOODPrompt
 from .clip_coop_negprompt import CoOp_NegOODPrompt
 from .clip_maple import Maple
 from .clip_maple_oodprompt import Maple_OneOODPrompt
+from .clip_fixed_dde import FixedCLIP_DDE
 
 def check_size_mismatches(net, checkpoint_path):
     # 加载检查点的状态字典
@@ -139,6 +140,8 @@ def get_network(network_config):
     elif network_config.name == 'fixedclip_negoodprompt_localfeat':
         net = FixedCLIP_NegOODPrompt_Localfeat(network_config)
 
+    elif network_config.name == 'fixedclip_dde':
+        net = FixedCLIP_DDE(network_config)
 
     elif network_config.name == 'densenet':
         net = DenseNet3(depth=100,

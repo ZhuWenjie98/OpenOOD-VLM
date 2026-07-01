@@ -14,7 +14,7 @@ import torch.nn.functional as F
 from openood.postprocessors import BasePostprocessor
 
 from .ood_evaluator import OODEvaluator
-from .metrics import compute_all_metrics
+from .metrics import compute_all_metrics, compute_dual_metrics
 import pdb
 
 class FSOODEvaluatorClip(OODEvaluator):
@@ -337,7 +337,7 @@ class OODEvaluatorClipTTA(OODEvaluator):
         #         id_gt = np.concatenate([id_gt, csid_gt])
         # load nearood data and compute ood metrics
         # pdb.set_trace()
-        print(u'\u2500' * 70, flush=True)
+        # print(u'\u2500' * 70, flush=True)
         self._eval_ood(net, id_data_loaders['test'],
                        ood_data_loaders,
                        postprocessor,
@@ -433,3 +433,128 @@ class OODEvaluatorClipTTA(OODEvaluator):
         metrics_mean = np.mean(metrics_list, axis=0)
         if self.config.recorder.save_csv:
             self._save_csv(metrics_mean, dataset_name=ood_split)
+
+
+class OODEvaluatorClipDDE(OODEvaluator):
+    def eval_acc(self,
+                 net: nn.Module,
+                 data_loader: DataLoader,
+                 postprocessor: BasePostprocessor = None,
+                 epoch_idx: int = -1, fsood=True,
+                 csid_data_loaders=None):
+        postprocessor.reset_memory()  ## reset the memory for the ID evaluation.
+        net.eval()
+
+        loss_avg = 0.0
+        correct = 0
+        with torch.no_grad():
+            for batch in tqdm(data_loader,
+                              desc='Eval: ',
+                              position=0,
+                              leave=True,
+                              disable=not comm.is_main_process()):
+                # prepare data
+                data = batch['data'].cuda()
+                target = batch['label'].cuda()
+
+                # forward
+                # output = net(data)
+                pred, _ = postprocessor.postprocess(net, data)
+
+                # loss = F.cross_entropy(output, target)
+
+                # # accuracy
+                # pred = output.data.max(1)[1]
+                correct += pred.eq(target.data).sum().item()
+
+                # test loss average
+                # loss_avg += float(loss.data)
+
+        loss = loss_avg / len(data_loader)
+        acc = correct / len(data_loader.dataset)
+
+        metrics = {}
+        metrics['epoch_idx'] = epoch_idx
+        metrics['loss'] = self.save_metrics(loss)
+        metrics['acc'] = self.save_metrics(acc)
+        return metrics
+
+    def eval_ood(self, net: nn.Module, id_data_loaders: List[DataLoader],
+                 ood_data_loaders: List[DataLoader],
+                 postprocessor: BasePostprocessor,  fsood: bool = False):
+        # ensure the networks in eval mode
+        if type(net) is dict:
+            for subnet in net.values():
+                subnet.eval()
+        else:
+            net.eval()
+        # load training in-distribution data
+        assert 'test' in id_data_loaders, \
+            'id_data_loaders should have the key: test!'
+        dataset_name = self.config.dataset.name
+        if self.config.postprocessor.APS_mode:
+            assert 'val' in id_data_loaders
+            assert 'val' in ood_data_loaders
+            self.hyperparam_search(net, id_data_loaders['val'],
+                                   ood_data_loaders['val'], postprocessor)
+        print(f'Performing inference on {dataset_name} dataset...', flush=True)
+
+        # pdb.set_trace()
+        # print(u'\u2500' * 70, flush=True)
+        # self._eval_ood(net, id_data_loaders['test'],
+        #                ood_data_loaders,
+        #                postprocessor,
+        #                ood_split='nearood', fsood=fsood)
+
+        # load farood data and compute ood metrics
+        print(u'\u2500' * 70, flush=True)
+        self._eval_ood(net, id_data_loaders['test'],
+                       ood_data_loaders,
+                       postprocessor,
+                       ood_split='farood', fsood=fsood)
+
+    ## calculate the id pred/conf/gt online, not offline as the default setting. Therefore, different data order may lead to different results. 
+    def _eval_ood(self,
+                  net: nn.Module,
+                  id_loader: DataLoader,
+                  ood_data_loaders: Dict[str, Dict[str, DataLoader]],
+                  postprocessor: BasePostprocessor,
+                  ood_split: str = 'nearood', fsood=False):
+        print(f'Processing {ood_split}...', flush=True)
+        # [id_pred, id_conf, id_gt] = id_list
+        metrics_list = []
+        postprocessor.reset_memory()  ## here, we inherit the memory with the same near/far OOD group; using more information, not fair
+        for dataset_name, ood_dl in ood_data_loaders[ood_split].items():
+            # print('the memorized feature from previous OOD dataset is not emptied.')
+            postprocessor.reset_memory()  ## here, we reset the memory for each OOD datasets.
+            print(f'Performing inference on {dataset_name} dataset...', flush=True)
+            # merging the id dataloader and ood dataloader! 
+            # pdb.set_trace()
+            postprocessor.setup(net, id_loader, ood_dl)
+
+            combined_dataset = ConcatDataset([ood_dl.dataset, id_loader.dataset])
+            if fsood and 'csid' in ood_data_loaders.keys():
+                print(f'concating ID, CSID, and OOD dataset', flush=True)
+                for dataset_name_csid, csid in ood_data_loaders['csid'].items():
+                    combined_dataset = ConcatDataset([combined_dataset, csid.dataset])
+            print(f'Generating combined dataset with ID and OOD dataset of {dataset_name}, total size {len(combined_dataset)}')
+            # pdb.set_trace()
+            # Create a new DataLoader from the combined dataset. The shuffle operation is verified
+            combined_dataloader = DataLoader(combined_dataset, batch_size=id_loader.batch_size, num_workers=id_loader.num_workers, shuffle=True)
+            pred, conf, label = postprocessor.inference(net, combined_dataloader) 
+
+
+            print(f'Computing metrics on {dataset_name} dataset...')
+
+            ood_metrics = compute_dual_metrics(conf, label, pred)
+            if self.config.recorder.save_csv:
+                self._save_dde_csv(ood_metrics, dataset_name=dataset_name)
+            metrics_list.append(ood_metrics)
+
+
+
+        print('Computing mean metrics...', flush=True)
+        metrics_list = np.array(metrics_list)
+        metrics_mean = np.mean(metrics_list, axis=0)
+        if self.config.recorder.save_csv:
+            self._save_dde_csv(metrics_mean, dataset_name=ood_split)
